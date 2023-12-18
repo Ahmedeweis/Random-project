@@ -287,13 +287,13 @@
           <label class="cell-label">اختر المدينة *</label>
           <select class="dropdown-select" v-model="city_id" @change="updateNeighborhoods">
             <option disabled selected value="0">اختر المدينة *</option>
-            <option v-for="city in cities" :value="city.id" :key="city.id">{{ city.name_ar }}</option>
+            <option v-for="city in cities" :value="city.city_id" :key="city.city_id">{{ city.name_ar }}</option>
           </select>
         </div>
 
         <div class="dropdown">
           <label class="cell-label">اختر الحي *</label>
-          <select class="dropdown-select" name="" v-model="Neighborhood_id">
+          <select class="dropdown-select" name="" v-model="selectedNeighborhoods">
             <option disabled selected value="option0">اختر الحي *</option>
             <option v-for="neighborhood in partnerNeighborhoods" :value="neighborhood.id" :key="neighborhood.id">{{ neighborhood.name_ar }}</option>
             <option value="0">غير ذلك</option>
@@ -763,7 +763,7 @@ import { BASE_URL } from '@/api-config';
 import axios from 'axios';
 // import createToaster from '@meforma/vue-toaster';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import qs from 'qs';
+// import qs from 'qs';
 import FormBack from '../../components/FormComponents/FormBack.vue';
 
 export default {
@@ -793,7 +793,7 @@ export default {
 
       have_property: '',
 
-      images: [1, 2, 3, 4, 5],
+      images: [],
 
       needs_money: false,
       negotiable: false,
@@ -934,9 +934,27 @@ export default {
       this.negotiableResult = this.negotiable ? 1 : 0;
       this.needsMoneyResult = this.needs_money ? 1 : 0;
     },
+    // handleFileInput(index) {
+    //   const fileInput = this.$refs.fileInputRef[index];
+    //   const file = fileInput.files[0];
+    //   if (file) {
+    //     const reader = new FileReader();
+    //     reader.onload = (e) => {
+    //       this.filePreviewStyles[index] = {
+    //         backgroundImage: `url('${e.target.result}')`,
+    //         display: 'block',
+    //       };
+    //       // Push the uploaded image to the images array
+    //       this.images[index] = file;
+    //     };
+    //     reader.readAsDataURL(file);
+    //   }
+    // },
     handleFileInput(index) {
       const fileInput = this.$refs.fileInputRef[index];
       const file = fileInput.files[0];
+      console.log('Selected file:', file);
+
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -946,9 +964,11 @@ export default {
           };
           // Push the uploaded image to the images array
           this.images[index] = file;
+          console.log('Updated images array:', this.images);
         };
         reader.readAsDataURL(file);
       }
+      console.log('Images array before API call:', this.images);
     },
 
     // fetchDomains() {
@@ -1109,21 +1129,24 @@ export default {
       if (this.partner_type === '0' && this.have_property === '1') {
         const apiUrl = `${BASE_URL}/Home/Addreal_estate_yesPost`;
         const formData = {
-          purpose: 0,
-          property_type: 0,
-          property_area: 0,
-          directions: 'string',
-          street_width: 0,
-          negotiable: 0,
-          neighborhood: 'string',
-          needs_money: 0,
+          purpose: this.purpose,
+          property_type: this.property_type,
+          property_area: this.property_area,
+          directions: this.concatenatedDirections,
+          street_width: this.street_width,
+          negotiable: this.negotiableResult,
+          partnerNeighborhoods: this.concatenatedNeighborhoods,
+          needs_money: this.needsMoneyResult,
           userID: this.userId,
-          partner_type: 0,
-          city_id: 0,
-          investment_cost: 0,
-          description: 'string',
-          partners_count: 0,
-          partnerNeighborhoods: 'string',
+          partner_type: this.partner_type,
+          city_id: this.city_id,
+          investment_cost: this.investment_cost,
+          description: this.description,
+          partners_count: this.partners_count,
+          plan_number: this.plan_number,
+          property_number: this.property_number,
+          property_age: this.property_age,
+          images: this.images,
         };
 
         try {
@@ -1133,7 +1156,7 @@ export default {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${this.token}`,
             },
-            body: qs.stringify(formData),
+            body: JSON.stringify(formData),
           });
 
           if (!response.ok) {

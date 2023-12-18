@@ -88,14 +88,16 @@ export default {
       suggestedAmount: 100000,
       iSpecificationsOK: '',
       isAmountofMoneyOK: '',
-      commercial: 'ec9465e5-0c7e-4044-2df0-08dbfcecc3b0',
-      real_estate_yes: 'ec9465e5-0c7e-4044-2df0-08dbfcecc3b0',
-      real_estate_no: 'ec9465e5-0c7e-4044-2df0-08dbfcecc3b0',
+      commercial: '',
+      real_estate_yes: '',
+      real_estate_no: '',
       token: '',
-      userId: 'ddfbfcd2-d3fc-420a-89d4-cac2f81a26ad',
+      userId: '',
     };
   },
   mounted() {
+    const realEstateId = this.$route.params.id;
+    console.log('Real Estate ID:', realEstateId);
     this.token = localStorage.getItem('token');
     if (!this.token) {
     // Handle the case when the token is not available
@@ -111,14 +113,7 @@ export default {
     },
     submitOffer() {
       const payload = {
-        requester: 'ddfbfcd2-d3fc-420a-89d4-cac2f81a26ad',
-        iSpecificationsOK: this.iSpecificationsOK === '1' ? 1 : 0,
-        isAmountofMoneyOK: this.isAmountofMoneyOK === '1' ? 1 : 0,
-        suggestedAmount: this.suggestedAmount,
-        commercial: '',
-        real_estate_yes: '',
-        real_estate_no: 'ec9465e5-0c7e-4044-2df0-08dbfcecc3b0',
-        Reques: 'string',
+
       };
 
       const headers = {

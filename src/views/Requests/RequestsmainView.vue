@@ -26,7 +26,7 @@
           <div class="filed-data">
             <img src="../../assets/imgs/to-do-list.png" class="icone-resize">
             <h2 class="data-lable"> &nbsp;رقم الطلب &nbsp;:&nbsp;</h2>
-            <h3 class="data-value">{{ shortenId(realEstate.id) }}</h3>
+            <h3 class="data-value">{{ realEstate.id }}</h3> <!-- shortenId() -->
             <p class="Request-num min-Request-num">{{ realEstate.partner_type || '' }}&nbsp;&nbsp;</p>
             <p class="Request-num min-Request-num">{{getPurposeById(realEstate.purpose)}}</p>
           </div>
@@ -73,8 +73,8 @@
         <section class="actions">
           <a href="othersFullReq.html" class="details-link">التفاصيل</a>
           <div class="another-acrions">
-            <router-link to="/AddOffer" class="mashrouk-btn main-req-button" >
-                <h4>أنضم كشريك</h4>
+            <router-link :to="{ name: 'AddOffer', params: { id: realEstate.id } }" class="mashrouk-btn main-req-button">
+              <h4>أنضم كشريك</h4>
             </router-link>
             <a href="" class=" main-req-button m-r"> <!-- .expline  -->
               <img src="../../assets/imgs/heart.png" class="main-req-button-img" >
@@ -170,7 +170,6 @@ export default {
   data() {
     return {
       access_token: '',
-      user_id: '',
       partners: [],
       partnerDetails: [],
       apartments_number: '1',
@@ -212,7 +211,7 @@ export default {
       units_number: '',
       user_contribution: '',
       uploadBoxes: [0, 1, 2, 3, 4],
-      Iduser: 'ddfbfcd2-d3fc-420a-89d4-cac2f81a26ad',
+      Iduser: '',
       token: '',
       user: {},
       commercials: [],
@@ -251,10 +250,16 @@ export default {
         );
 
         this.realEstate = response.data.real_Estate_No.concat(response.data.real_Estate_Yes);
-        console.log('Number of elements in real_Estate_No:', this.realEstate.length);
+        console.log('Number of elements in real_Estate:', this.realEstate.length);
+        // eslint-disable-next-line max-len
+        this.realEstate = this.realEstate.filter((item) => item.owner && item.owner.id !== this.Iduser);
+        console.log('Number of elements in real_Estate_after filter:', this.realEstate.length);
 
         this.commercials = response.data.commercials;
         console.log('Number of elements in commercials:', this.commercials.length);
+        // eslint-disable-next-line max-len
+        this.commercials = this.commercials.filter((item) => item.owner && item.owner.id !== this.Iduser);
+        console.log('Number of elements in commercials after filter:', this.commercials.length);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -314,10 +319,10 @@ export default {
           return 'null';
       }
     },
-    shortenId(id) {
-      const hash = id.split('-').join(''); // Remove dashes
-      return hash.substring(0, 8); // Take the first 8 characters
-    },
+    // shortenId(id) {
+    //   const hash = id.split('-').join(''); // Remove dashes
+    //   return hash.substring(0, 8); // Take the first 8 characters
+    // },
     // async deletePartner(partnerId) {
     //   try {
     //     const headers = {

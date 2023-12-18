@@ -241,7 +241,7 @@ export default {
       units_number: '',
       user_contribution: '',
       uploadBoxes: [0, 1, 2, 3, 4],
-      Iduser: 'ddfbfcd2-d3fc-420a-89d4-cac2f81a26ad',
+      Iduser: '',
       token: '',
       user: {},
       commercials: [],
@@ -265,7 +265,6 @@ export default {
   methods: {
     async getuserID() {
       this.Iduser = localStorage.getItem('userId');
-      console.log('Iduser:', this.Iduser);
     },
 
     async fetchData() {
